@@ -127,12 +127,25 @@ exports.User = void 0;
 var User = /** @class */function () {
   function User(data) {
     this.data = data;
+    this.events = {};
   }
   User.prototype.get = function (propName) {
     return this.data[propName];
   };
   User.prototype.set = function (update) {
     Object.assign(this.data, update);
+  };
+  User.prototype.on = function (eventName, callback) {
+    var handlers = this.events[eventName] || [];
+    handlers.push(callback);
+    this.events[eventName] = handlers;
+  };
+  User.prototype.trigger = function (eventName) {
+    var handlers = this.events[eventName];
+    if (!handlers || handlers.length === 0) return;
+    handlers.forEach(function (callback) {
+      return callback();
+    });
   };
   User.prototype.print = function () {
     var _a = this.data,
@@ -151,6 +164,18 @@ Object.defineProperty(exports, "__esModule", {
 });
 var User_1 = require("./models/User");
 var user = new User_1.User({});
+user.on('change', function () {
+  console.log('change 1 was triggered');
+});
+user.on('change', function () {
+  console.log('change 2 was triggered');
+});
+user.on('save', function () {
+  console.log('save was triggered');
+});
+user.trigger('change');
+user.trigger('save');
+console.log(user);
 user.set({
   name: 'Gary',
   age: 30

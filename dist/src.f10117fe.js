@@ -117,7 +117,70 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   }
 
   return newRequire;
-})({"node_modules/axios/lib/helpers/bind.js":[function(require,module,exports) {
+})({"src/models/Attributes.ts":[function(require,module,exports) {
+"use strict";
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Attributes = void 0;
+var Attributes = /*#__PURE__*/function () {
+  function Attributes(data) {
+    var _this = this;
+    _classCallCheck(this, Attributes);
+    this.data = data;
+    // K can only ever be one of the keys of T
+    this.get = function (key) {
+      return _this.data[key];
+    };
+  }
+  _createClass(Attributes, [{
+    key: "getAll",
+    value: function getAll() {
+      return this.data;
+    }
+  }, {
+    key: "set",
+    value: function set(update) {
+      Object.assign(this.data, update);
+    }
+  }]);
+  return Attributes;
+}();
+exports.Attributes = Attributes;
+},{}],"src/models/Eventing.ts":[function(require,module,exports) {
+"use strict";
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Eventing = void 0;
+var Eventing = /*#__PURE__*/_createClass(function Eventing() {
+  var _this = this;
+  _classCallCheck(this, Eventing);
+  this.events = {};
+  // use arrow function to get use of the this keyword
+  this.on = function (eventName, callback) {
+    var handlers = _this.events[eventName] || [];
+    handlers.push(callback);
+    _this.events[eventName] = handlers;
+  };
+  this.trigger = function (eventName) {
+    var handlers = _this.events[eventName];
+    if (!handlers || handlers.length === 0) return;
+    handlers.forEach(function (callback) {
+      return callback();
+    });
+  };
+});
+exports.Eventing = Eventing;
+},{}],"node_modules/axios/lib/helpers/bind.js":[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -5353,7 +5416,7 @@ exports.AxiosError = AxiosError;
 exports.Axios = Axios;
 var _default = _axios.default;
 exports.default = _default;
-},{"./lib/axios.js":"node_modules/axios/lib/axios.js"}],"src/models/User.ts":[function(require,module,exports) {
+},{"./lib/axios.js":"node_modules/axios/lib/axios.js"}],"src/models/Sync.ts":[function(require,module,exports) {
 "use strict";
 
 var __importDefault = this && this.__importDefault || function (mod) {
@@ -5364,50 +5427,96 @@ var __importDefault = this && this.__importDefault || function (mod) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.User = void 0;
+exports.Sync = void 0;
 var axios_1 = __importDefault(require("axios"));
-var url = 'http://localhost:3000';
-var User = /** @class */function () {
-  function User(data) {
-    this.data = data;
-    this.events = {};
+var Sync = /** @class */function () {
+  function Sync(rootUrl) {
+    this.rootUrl = rootUrl;
   }
-  User.prototype.get = function (propName) {
-    return this.data[propName];
+  Sync.prototype.fetch = function (id) {
+    return axios_1.default.get("".concat(this.rootUrl, "/").concat(id));
   };
-  User.prototype.set = function (update) {
-    Object.assign(this.data, update);
-  };
-  User.prototype.on = function (eventName, callback) {
-    var handlers = this.events[eventName] || [];
-    handlers.push(callback);
-    this.events[eventName] = handlers;
-  };
-  User.prototype.trigger = function (eventName) {
-    var handlers = this.events[eventName];
-    if (!handlers || handlers.length === 0) return;
-    handlers.forEach(function (callback) {
-      return callback();
-    });
-  };
-  User.prototype.fetch = function () {
-    var _this = this;
-    axios_1.default.get("".concat(url, "/users/").concat(this.get('id'))).then(function (response) {
-      _this.set(response.data);
-    });
-  };
-  User.prototype.save = function () {
-    var id = this.get('id');
+  Sync.prototype.save = function (data) {
+    var id = data.id;
     if (id) {
-      axios_1.default.put("".concat(url, "/users/").concat(id), this.data);
+      return axios_1.default.put("".concat(this.rootUrl, "/").concat(id), data);
     } else {
-      axios_1.default.post("".concat(url, "/users"), this.data);
+      return axios_1.default.post(this.rootUrl, data);
     }
   };
+  return Sync;
+}();
+exports.Sync = Sync;
+},{"axios":"node_modules/axios/index.js"}],"src/models/User.ts":[function(require,module,exports) {
+"use strict";
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.User = void 0;
+var Attributes_1 = require("./Attributes");
+var Eventing_1 = require("./Eventing");
+var Sync_1 = require("./Sync");
+var rootUrl = 'http://localhost:3000/users';
+var User = /*#__PURE__*/function () {
+  function User(attrs) {
+    _classCallCheck(this, User);
+    this.events = new Eventing_1.Eventing();
+    this.sync = new Sync_1.Sync(rootUrl);
+    this.attributes = new Attributes_1.Attributes(attrs);
+  }
+  _createClass(User, [{
+    key: "get",
+    get: function get() {
+      return this.attributes.get;
+    }
+  }, {
+    key: "on",
+    get: function get() {
+      return this.events.on;
+    }
+  }, {
+    key: "trigger",
+    get: function get() {
+      return this.events.trigger;
+    }
+  }, {
+    key: "set",
+    value: function set(update) {
+      this.attributes.set(update);
+      this.events.trigger('change');
+    }
+  }, {
+    key: "fetch",
+    value: function fetch() {
+      var _this = this;
+      var id = this.attributes.get('id');
+      if (typeof id !== 'number') {
+        throw new Error('Cannot fetch with id');
+      } else {
+        this.sync.fetch(id).then(function (response) {
+          _this.set(response.data);
+        });
+      }
+    }
+  }, {
+    key: "save",
+    value: function save() {
+      var _this2 = this;
+      this.sync.save(this.attributes.getAll()).then(function (response) {
+        _this2.trigger('save');
+      }).catch(function (error) {
+        _this2.trigger('error');
+      });
+    }
+  }]);
   return User;
 }();
 exports.User = User;
-},{"axios":"node_modules/axios/index.js"}],"src/index.ts":[function(require,module,exports) {
+},{"./Attributes":"src/models/Attributes.ts","./Eventing":"src/models/Eventing.ts","./Sync":"src/models/Sync.ts"}],"src/index.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5415,8 +5524,12 @@ Object.defineProperty(exports, "__esModule", {
 });
 var User_1 = require("./models/User");
 var user = new User_1.User({
-  name: 'new record',
-  age: 1
+  id: 1,
+  name: 'ciara',
+  age: 0
+});
+user.on('save', function () {
+  console.log(user);
 });
 user.save();
 },{"./models/User":"src/models/User.ts"}],"../../../.nvm/versions/node/v14.18.1/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
@@ -5444,7 +5557,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "56122" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60248" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];

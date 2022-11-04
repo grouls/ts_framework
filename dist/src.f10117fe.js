@@ -5472,23 +5472,11 @@ var Model = /*#__PURE__*/function () {
     this.attributes = attributes;
     this.events = events;
     this.sync = sync;
+    this.get = this.attributes.get;
+    this.on = this.events.on;
+    this.trigger = this.events.trigger;
   }
   _createClass(Model, [{
-    key: "get",
-    get: function get() {
-      return this.attributes.get;
-    }
-  }, {
-    key: "on",
-    get: function get() {
-      return this.events.on;
-    }
-  }, {
-    key: "trigger",
-    get: function get() {
-      return this.events.trigger;
-    }
-  }, {
     key: "set",
     value: function set(update) {
       this.attributes.set(update);
@@ -5599,7 +5587,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "53490" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "57804" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];

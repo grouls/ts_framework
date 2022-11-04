@@ -1,6 +1,4 @@
-import { User, UserProps } from './models/User';
-
-import { Collection }      from './models/Collection';
+import { User } from './models/User';
 
 const collection = User.buildUserCollection();
 

@@ -120,6 +120,12 @@ parcelRequire = (function (modules, cache, entry, globalName) {
 })({"src/views/UserForm.ts":[function(require,module,exports) {
 "use strict";
 
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+function _iterableToArrayLimit(arr, i) { var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"]; if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
@@ -133,15 +139,51 @@ var UserForm = /*#__PURE__*/function () {
     this.parent = parent;
   }
   _createClass(UserForm, [{
+    key: "eventsMap",
+    value: function eventsMap() {
+      return {
+        'click:button': this.onButtonClick,
+        'mouseenter:h1': this.onHeaderHover
+      };
+    }
+  }, {
+    key: "onButtonClick",
+    value: function onButtonClick() {
+      console.log('hi there');
+    }
+  }, {
+    key: "onHeaderHover",
+    value: function onHeaderHover() {
+      console.log('hovering');
+    }
+  }, {
     key: "template",
     value: function template() {
-      return "\n      <div>\n        <h1>User Form</h1>\n        <input />\n      </div>\n    ";
+      return "\n      <div>\n        <h1>User Form</h1>\n        <input />\n        <button>Click Me</button>\n      </div>\n    ";
+    }
+  }, {
+    key: "bindEvents",
+    value: function bindEvents(fragment) {
+      var eventsMap = this.eventsMap();
+      var _loop = function _loop(eventKey) {
+        var _eventKey$split = eventKey.split(':'),
+          _eventKey$split2 = _slicedToArray(_eventKey$split, 2),
+          eventName = _eventKey$split2[0],
+          selector = _eventKey$split2[1];
+        fragment.querySelectorAll(selector).forEach(function (element) {
+          element.addEventListener(eventName, eventsMap[eventKey]);
+        });
+      };
+      for (var eventKey in eventsMap) {
+        _loop(eventKey);
+      }
     }
   }, {
     key: "render",
     value: function render() {
       var templateElement = document.createElement('template');
       templateElement.innerHTML = this.template();
+      this.bindEvents(templateElement.content);
       this.parent.append(templateElement.content);
     }
   }]);
@@ -182,7 +224,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55413" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "59120" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];

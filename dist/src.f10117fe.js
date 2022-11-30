@@ -5640,6 +5640,15 @@ var UserForm = /*#__PURE__*/function () {
     this.onSetAgeClick = function () {
       _this.model.setRandomAge();
     };
+    this.onSetNameClick = function () {
+      var input = _this.parent.querySelector('input');
+      if (input) {
+        var name = input.value;
+        _this.model.set({
+          name: name
+        });
+      }
+    };
     this.bindModel();
   }
   _createClass(UserForm, [{
@@ -5654,13 +5663,14 @@ var UserForm = /*#__PURE__*/function () {
     key: "eventsMap",
     value: function eventsMap() {
       return {
-        'click:.set-age': this.onSetAgeClick
+        'click:.set-age': this.onSetAgeClick,
+        'click:.set-name': this.onSetNameClick
       };
     }
   }, {
     key: "template",
     value: function template() {
-      return "\n      <div>\n        <h1>User Form</h1>\n        <div>Name: ".concat(this.model.get('name'), "</div>\n        <div>Age: ").concat(this.model.get('age'), "</div>\n        <input />\n        <button>Click Me</button>\n        <button class=\"set-age\">Set Random Age</button>\n      </div>\n    ");
+      return "\n      <div>\n        <h1>User Form</h1>\n        <div>Name: ".concat(this.model.get('name'), "</div>\n        <div>Age: ").concat(this.model.get('age'), "</div>\n        <input />\n        <button class=\"set-name\">Change Name</button>\n        <button class=\"set-age\">Set Random Age</button>\n      </div>\n    ");
     }
   }, {
     key: "bindEvents",
@@ -5704,8 +5714,13 @@ var user = User_1.User.buildUser({
   name: 'Gary',
   age: 29
 });
-var userForm = new UserForm_1.UserForm(document.getElementById('root'), user);
-userForm.render();
+var root = document.getElementById('root');
+if (root) {
+  var userForm = new UserForm_1.UserForm(root, user);
+  userForm.render();
+} else {
+  throw new Error('Root element not found');
+}
 },{"./models/User":"src/models/User.ts","./views/UserForm":"src/views/UserForm.ts"}],"../../../.nvm/versions/node/v14.18.1/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
@@ -5731,7 +5746,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "59120" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60650" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];

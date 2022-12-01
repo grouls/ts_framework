@@ -5408,20 +5408,19 @@ var Attributes = /*#__PURE__*/function () {
     var _this = this;
     _classCallCheck(this, Attributes);
     this.data = data;
-    // K can only ever be one of the keys of T
     this.get = function (key) {
       return _this.data[key];
     };
   }
   _createClass(Attributes, [{
-    key: "getAll",
-    value: function getAll() {
-      return this.data;
-    }
-  }, {
     key: "set",
     value: function set(update) {
       Object.assign(this.data, update);
+    }
+  }, {
+    key: "getAll",
+    value: function getAll() {
+      return this.data;
     }
   }]);
   return Attributes;
@@ -5441,7 +5440,6 @@ var Eventing = /*#__PURE__*/_createClass(function Eventing() {
   var _this = this;
   _classCallCheck(this, Eventing);
   this.events = {};
-  // use arrow function to get use of the this keyword
   this.on = function (eventName, callback) {
     var handlers = _this.events[eventName] || [];
     handlers.push(callback);
@@ -5449,9 +5447,11 @@ var Eventing = /*#__PURE__*/_createClass(function Eventing() {
   };
   this.trigger = function (eventName) {
     var handlers = _this.events[eventName];
-    if (!handlers || handlers.length === 0) return;
+    if (!handlers || handlers.length === 0) {
+      return;
+    }
     handlers.forEach(function (callback) {
-      return callback();
+      callback();
     });
   };
 });
@@ -5481,7 +5481,6 @@ var Collection = /*#__PURE__*/function () {
     this.models = [];
     this.events = new Eventing_1.Eventing();
   }
-  // We don't use the shortened syntax as the properties are intialised inline.
   _createClass(Collection, [{
     key: "on",
     get: function get() {
@@ -5500,8 +5499,8 @@ var Collection = /*#__PURE__*/function () {
         response.data.forEach(function (value) {
           _this.models.push(_this.deserialize(value));
         });
+        _this.trigger('change');
       });
-      this.trigger('change');
     }
   }]);
   return Collection;
@@ -5523,9 +5522,9 @@ var Model = /*#__PURE__*/function () {
     this.attributes = attributes;
     this.events = events;
     this.sync = sync;
-    this.get = this.attributes.get;
     this.on = this.events.on;
     this.trigger = this.events.trigger;
+    this.get = this.attributes.get;
   }
   _createClass(Model, [{
     key: "set",
@@ -5539,12 +5538,11 @@ var Model = /*#__PURE__*/function () {
       var _this = this;
       var id = this.get('id');
       if (typeof id !== 'number') {
-        throw new Error('Cannot fetch with id');
-      } else {
-        this.sync.fetch(id).then(function (response) {
-          _this.set(response.data);
-        });
+        throw new Error('Cannot fetch without an id');
       }
+      this.sync.fetch(id).then(function (response) {
+        _this.set(response.data);
+      });
     }
   }, {
     key: "save",
@@ -5552,7 +5550,7 @@ var Model = /*#__PURE__*/function () {
       var _this2 = this;
       this.sync.save(this.attributes.getAll()).then(function (response) {
         _this2.trigger('save');
-      }).catch(function (error) {
+      }).catch(function () {
         _this2.trigger('error');
       });
     }
@@ -5702,9 +5700,6 @@ var UserForm = /*#__PURE__*/function (_View_1$View) {
     var _this;
     _classCallCheck(this, UserForm);
     _this = _super.apply(this, arguments);
-    _this.onSetAgeClick = function () {
-      _this.model.setRandomAge();
-    };
     _this.onSetNameClick = function () {
       var input = _this.parent.querySelector('input');
       if (input) {
@@ -5713,6 +5708,9 @@ var UserForm = /*#__PURE__*/function (_View_1$View) {
           name: name
         });
       }
+    };
+    _this.onSetAgeClick = function () {
+      _this.model.setRandomAge();
     };
     return _this;
   }
@@ -5727,7 +5725,7 @@ var UserForm = /*#__PURE__*/function (_View_1$View) {
   }, {
     key: "template",
     value: function template() {
-      return "\n      <div>\n        <h1>User Form</h1>\n        <div>Name: ".concat(this.model.get('name'), "</div>\n        <div>Age: ").concat(this.model.get('age'), "</div>\n        <input />\n        <button class=\"set-name\">Change Name</button>\n        <button class=\"set-age\">Set Random Age</button>\n      </div>\n    ");
+      return "\n      <div>\n        <h1>User Form</h1>\n        <div>User name: ".concat(this.model.get('name'), "</div>\n        <div>User age: ").concat(this.model.get('age'), "</div>\n        <input />\n        <button class=\"set-name\">Change Name</button>\n        <button class=\"set-age\">Set Random Age</button>\n      </div>\n    ");
     }
   }]);
   return UserForm;
@@ -5777,7 +5775,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "60650" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51887" + '/');
   ws.onmessage = function (event) {
     checkedAssets = {};
     assetsToAccept = [];

@@ -1,9 +1,8 @@
-// example of type alias
 type Callback = () => void;
 
 export class Eventing {
   events: { [key: string]: Callback[] } = {};
-  // use arrow function to get use of the this keyword
+
   on = (eventName: string, callback: Callback): void => {
     const handlers = this.events[eventName] || [];
     handlers.push(callback);
@@ -13,8 +12,12 @@ export class Eventing {
   trigger = (eventName: string): void => {
     const handlers = this.events[eventName];
 
-    if (!handlers || handlers.length === 0) return;
+    if (!handlers || handlers.length === 0) {
+      return;
+    }
 
-    handlers.forEach(callback => callback());
+    handlers.forEach(callback => {
+      callback();
+    });
   };
 }
